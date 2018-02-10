@@ -1,19 +1,53 @@
 <?php
+/*
+O QUE ACHA DE DEIXAR ESSA PARTA ALTERAVEL PARA QUE O SISTEMA POSSSA
+SER USADOS POR QUALQUER PESSOA?
+*/
+
 
 class Banco
 {
-    private static $dbNome = 'contato';
-    private static $dbHost = 'localhost:3306';
-    private static $dbUsuario = 'root';
-    private static $dbSenha = '';
+    private static $dbNome;
+    private static $dbHost;
+    private static $dbUsuario;
+    private static $dbSenha;
     
     private static $cont = null;
     
-    public function __construct() 
+    /*public function __construct() 
     {
         die('A função Init nao é permitido!');
+    }*/
+    
+    /*DESSA FORMA*/
+    public function __construct($dbHost,$dbUsuario,$dbSenha,$dbNome){
+        self::$dbHost       = $dbHost;
+        self::$dbUsuario    = $dbUsuario;
+        self::$dbSenha      = $dbSenha;
+        self::$dbNome       = $dbNome;
     }
     
+
+    /*
+    SE QUISER FAZER UMA API PARA MUITAS PESSOAS, O QUE ACHA DE
+    FAZER MAIS FUNCTION PRA CONECTAR AI A PESSOA ESCOLHE COMO TRABALHAR
+    COM "PDO ou MYSQL"
+    */
+
+    public function conectaMysqli(){
+        if(!self::$cont):
+            $conect = mysqli_connect(self::$dbHost,self::$dbUsuario,self::$dbUsuario,self::$dbSenha);
+            if(!conect):
+                echo "erro ao conectar com mysql";
+            else:
+                self::$cont = $conect;
+                wreturn self::$cont;
+            endif;
+        else:
+            return self::$cont;
+        endif;
+    }
+
     public static function conectar()
     {
         if(null == self::$cont)
