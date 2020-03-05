@@ -135,7 +135,7 @@
 
         if(empty($email))
         {
-            $telefoneErro = 'Por favor digite o endereço de email';
+            $emailError = 'Por favor digite o endereço de email';
             $validacao = false;
         }
         elseif (!filter_var($email,FILTER_VALIDATE_EMAIL))
