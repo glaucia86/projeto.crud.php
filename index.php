@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <title>Página Inicial</title>
@@ -38,24 +39,22 @@
                         $pdo = Banco::conectar();
                         $sql = 'SELECT * FROM pessoa ORDER BY id DESC';
 
-                        foreach($pdo->query($sql)as $row)
-                        {
-                            echo '<tr>';
-			                      echo '<th scope="row">'. $row['id'] . '</th>';
-                            echo '<td>'. $row['nome'] . '</td>';
-                            echo '<td>'. $row['endereco'] . '</td>';
-                            echo '<td>'. $row['telefone'] . '</td>';
-                            echo '<td>'. $row['email'] . '</td>';
-                            echo '<td>'. $row['sexo'] . '</td>';
-                            echo '<td width=250>';
-                            echo '<a class="btn btn-primary" href="read.php?id='.$row['id'].'">Info</a>';
-                            echo ' ';
-                            echo '<a class="btn btn-warning" href="update.php?id='.$row['id'].'">Atualizar</a>';
-                            echo ' ';
-                            echo '<a class="btn btn-danger" href="delete.php?id='.$row['id'].'">Excluir</a>';
-                            echo '</td>';
-                            echo '</tr>';
-                        }
+                        foreach($pdo->query($sql)as $row) : ?>
+                            <tr>
+                                <th scope="row"><?= $row['id'] ?></th>
+                                <td><?= $row['nome'] ?></td>
+                                <td><?= $row['endereco'] ?></td>
+                                <td><?= $row['telefone'] ?></td>
+                                <td><?= $row['email'] ?></td>
+                                <td><?= $row['sexo'] ?></td>
+                                <td width=250>
+                                    <a class="btn btn-primary" href="read.php?id='.$row['id'].'">Info</a>
+                                    <a class="btn btn-warning" href="update.php?id='.$row['id'].'">Atualizar</a>
+                                    <a class="btn btn-danger" href="delete.php?id='.$row['id'].'">Excluir</a>
+                                </td>
+                            </tr>
+                        <?php
+                        endforeach;
                         Banco::desconectar();
                         ?>
                     </tbody>
