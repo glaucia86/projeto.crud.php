@@ -11,48 +11,33 @@ if (null == $id) {
     header("Location: index.php");
 }
 
-if (!empty($_POST)) {
-
-    $nomeErro = null;
-    $enderecoErro = null;
-    $telefoneErro = null;
-    $emailErro = null;
-    $sexoErro = null;
-
-    $nome = $_POST['nome'];
-    $endereco = $_POST['endereco'];
-    $telefone = $_POST['telefone'];
-    $email = $_POST['email'];
-    $sexo = $_POST['sexo'];
-
-    //Validação
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $validacao = true;
-    if (empty($nome)) {
-        $nomeErro = 'Por favor digite o nome!';
-        $validacao = false;
-    }
 
-    if (empty($email)) {
-        $emailErro = 'Por favor digite o email!';
-        $validacao = false;
-    } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $emailErro = 'Por favor digite um email válido!';
-        $validacao = false;
-    }
+    $requiredField = (object)[
+        "nome" => "Por favor digite o seu nome!",
+        "endereco" => "Por favor digite o seu endereço!",
+        "telefone" => "Por favor digite o número do telefone!",
+        "email" => "Por favor digite um endereço de email válido!",
+        "sexo" => "Por favor selecione um campo!",
+    ];
 
-    if (empty($endereco)) {
-        $enderecoErro = 'Por favor digite o endereço!';
-        $validacao = false;
-    }
-
-    if (empty($telefone)) {
-        $telefoneErro = 'Por favor digite o telefone!';
-        $validacao = false;
-    }
-
-    if (empty($sexo)) {
-        $sexoErro = 'Por favor preenche o campo!';
-        $validacao = false;
+    if (!empty($_POST) && $_POST = filter_var_array($_POST, FILTER_SANITIZE_STRIPPED)) {
+        foreach ($requiredField as $field => $msgErro) {
+            if (isset($_POST[$field]) && !empty($_POST[$field])) {
+                $$field = $_POST[$field];
+                $erro[$field] = null;
+                if ($field == 'email' && !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+                    $erro[$field] = 'Por favor digite um endereço de email válido!';
+                    $validacao = false;
+                }
+            } else {
+                $erro[$field] = $msgErro;
+                $$field = null;
+                $validacao = false;
+            }
+        }
+        $erro = (object) $erro;
     }
 
     // update data
@@ -106,65 +91,67 @@ if (!empty($_POST)) {
             <div class="card-body">
                 <form class="form-horizontal" action="update.php?id=<?php echo $id ?>" method="post">
 
-                    <div class="control-group <?php echo !empty($nomeErro) ? 'error' : ''; ?>">
+                    <div class="control-group  <?= !empty($erro->nome) ? 'error' : ''; ?>">
                         <label class="control-label">Nome</label>
                         <div class="controls">
-                            <input name="nome" class="form-control" size="50" type="text" placeholder="Nome"
-                                   value="<?php echo !empty($nome) ? $nome : ''; ?>">
-                            <?php if (!empty($nomeErro)): ?>
-                                <span class="text-danger"><?php echo $nomeErro; ?></span>
+                            <input size="50" class="form-control" name="nome" type="text" placeholder="Nome"
+                                   value="<?= !empty($nome) ? $nome : ''; ?>">
+                            <?php if (!empty($erro->nome)): ?>
+                                <span class="text-danger"><?= $erro->nome; ?></span>
                             <?php endif; ?>
                         </div>
                     </div>
 
-                    <div class="control-group <?php echo !empty($enderecoErro) ? 'error' : ''; ?>">
+                    <div class="control-group <?= !empty($erro->endereco) ? 'error' : ''; ?>">
                         <label class="control-label">Endereço</label>
                         <div class="controls">
-                            <input name="endereco" class="form-control" size="80" type="text" placeholder="Endereço"
-                                   value="<?php echo !empty($endereco) ? $endereco : ''; ?>">
-                            <?php if (!empty($enderecoErro)): ?>
-                                <span class="text-danger"><?php echo $enderecoErro; ?></span>
+                            <input size="80" class="form-control" name="endereco" type="text" placeholder="Endereço"
+                                   value="<?= !empty($endereco) ? $endereco : '' ?>">
+                            <?php if (!empty($erro->endereco)): ?>
+                                <span class="text-danger"><?= $erro->endereco; ?></span>
                             <?php endif; ?>
                         </div>
                     </div>
 
-                    <div class="control-group <?php echo !empty($telefoneErro) ? 'error' : ''; ?>">
+                    <div class="control-group <?= !empty($erro->telefone) ? 'error' : ''; ?>">
                         <label class="control-label">Telefone</label>
                         <div class="controls">
-                            <input name="telefone" class="form-control" size="30" type="text" placeholder="Telefone"
-                                   value="<?php echo !empty($telefone) ? $telefone : ''; ?>">
-                            <?php if (!empty($telefoneErro)): ?>
-                                <span class="text-danger"><?php echo $telefoneErro; ?></span>
+                            <input size="35" class="form-control" name="telefone" type="text" placeholder="Telefone"
+                                   value="<?= !empty($telefone) ? $telefone : ''; ?>">
+                            <?php if (!empty($erro->telefone)): ?>
+                                <span class="text-danger"><?= $erro->telefone; ?></span>
                             <?php endif; ?>
                         </div>
                     </div>
 
-                    <div class="control-group <?php echo !empty($emailErro) ? 'error' : ''; ?>">
+                    <div class="control-group <?= !empty($erro->email) ? 'erro' : ''; ?>">
                         <label class="control-label">Email</label>
                         <div class="controls">
-                            <input name="email" class="form-control" size="40" type="text" placeholder="Email"
-                                   value="<?php echo !empty($email) ? $email : ''; ?>">
-                            <?php if (!empty($emailErro)): ?>
-                                <span class="text-danger"><?php echo $emailErro; ?></span>
+                            <input size="40" class="form-control" name="email" type="text" placeholder="Email"
+                                   value="<?= !empty($email) ? $email : ''; ?>">
+                            <?php if (!empty($erro->email)): ?>
+                                <span class="text-danger"><?= $erro->email; ?></span>
                             <?php endif; ?>
                         </div>
                     </div>
 
-                    <div class="control-group <?php echo !empty($sexoErro) ? 'error' : ''; ?>">
-                        <label class="control-label">Sexo</label>
+                    <div class="control-group <?= !empty($erro->sexo) ? 'erro' : ''; ?>">
                         <div class="controls">
+                            <label class="control-label">Sexo</label>
                             <div class="form-check">
                                 <p class="form-check-label">
                                     <input class="form-check-input" type="radio" name="sexo" id="sexo"
-                                           value="M" <?php echo ($sexo == "M") ? "checked" : null; ?>/> Masculino
+                                           value="M" <?= !empty($sexo) && $sexo == "M" ? "checked" : null; ?>/>
+                                    Masculino</p>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="sexo" id="sexo"
-                                       value="F" <?php echo ($sexo == "F") ? "checked" : null; ?>/> Feminino
+                                <p class="form-check-label">
+                                    <input class="form-check-input" id="sexo" name="sexo" type="radio"
+                                           value="F" <?= !empty($sexo) && $sexo == "F" ? "checked" : null; ?>/>
+                                    Feminino</p>
                             </div>
-                            </p>
-                            <?php if (!empty($sexoErro)): ?>
-                                <span class="text-danger"><?php echo $sexoErro; ?></span>
+                            <?php if (!empty($erro->sexo)): ?>
+                                <span class="help-inline text-danger"><?= $erro->sexo; ?></span>
                             <?php endif; ?>
                         </div>
                     </div>
